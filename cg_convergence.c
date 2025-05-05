@@ -155,7 +155,7 @@ void save_residuals(double *residuals, int iterations, int n) {
 
 int main() {
     // Test with different matrix sizes
-    int sizes[] = {100, 1000, 10000, 100000};
+    int sizes[] = {100, 1000, 10000};
     int num_sizes = sizeof(sizes) / sizeof(sizes[0]);
     
     printf("CG Convergence Study for Dense Matrix\n");
