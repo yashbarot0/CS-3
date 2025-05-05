@@ -2,7 +2,6 @@
 
 ## 3.1 Basics: The Poisson Problem
 
-### Problem Statement
 We need to solve the Poisson equation on a unit square:
 - Domain: $\Omega = (0, 1)^2$
 - Equation: $-\Delta u(x) = f(x)$ on the interior of $\Omega$
@@ -61,9 +60,8 @@ $b_k = -f(x_1,x_2) \cdot h^2$
 
 where $(x_1,x_2)$ are the coordinates of the grid point corresponding to index $k$.
 
-## 3.2 Serial Implementation of CG
+## 3.2 Serial Implementation of CG Algorithm
 
-### CG Algorithm Implementation
 The Conjugate Gradient (CG) algorithm for solving $Ax = b$ is implemented as follows:
 
 1. Initialize:
@@ -82,14 +80,10 @@ The Conjugate Gradient (CG) algorithm for solving $Ax = b$ is implemented as fol
    - Stop when $\|r_k\| < \text{tol} \cdot \|r_0\|$
 
 ### Efficient Implementation Details
-To optimize performance, the code includes several efficiency considerations:
-
+To optimize performance:-
 1. **Matrix-free Implementation**: Instead of explicitly storing the full matrix $A$, the code uses the stencil directly in the matrix-vector multiplication function `poisson_matrix_vector_mult()`. This saves memory and computation time.
-
 2. **Reusing Dot Products**: The dot product $r_k^T r_k$ is calculated once and reused for both $\alpha_k$ and $\beta_k$.
-
 3. **Memory Allocation**: The code allocates memory for vectors only once before the iteration starts, preventing repeated memory allocation/deallocation in the loop.
-
 4. **Relative Residual Stopping Criterion**: The algorithm stops when the relative residual $\|r_k\|/\|r_0\|$ falls below the specified tolerance, which is more robust than using an absolute tolerance.
 
 ### Performance Results
@@ -100,10 +94,6 @@ For grid sizes N = 8, 16, 32, 64, 128, 256, the code tabulates:
 - Time to solution
 - Maximum error compared to the exact solution
 
-The performance results show that:
-1. The number of iterations grows approximately as $O(\sqrt{N})$, which is consistent with the theory for the CG method applied to the discretized Poisson equation.
-2. The time to solution grows as $O(N^2 \log N)$, which comes from $O(N^2)$ operations per iteration and $O(\sqrt{N})$ iterations.
-3. The maximum error decreases as $O(h^2) = O(N^{-2})$, which matches the expected second-order accuracy of the central difference scheme.
 
 ## 3.3 Convergence of CG
 
@@ -137,116 +127,80 @@ For each matrix size N = 10², 10³, 10⁴, and 10⁵, the code:
 3. Records the residual at each iteration
 4. Compares the observed convergence rate with the theoretical prediction
 
-The results show that:
-1. The convergence rate closely follows the theoretical bound, especially after the initial iterations.
-2. As N increases, the condition number $\kappa$ also increases, leading to slower convergence.
-3. The number of iterations required for convergence grows approximately as $O(\sqrt{\kappa})$, which is consistent with the theory.
-
-The analysis verifies the theoretical convergence properties of the CG method and demonstrates its dependence on the condition number of the system matrix.
-
-
-
-
-Now, let me also create a comprehensive Makefile and test instructions to help you compile and run the code:Makefile and InstructionsCode 
-# Makefile for CG solver assignment
-
-CC = gcc
-CFLAGS = -Wall -O3 -march=native -ffast-math -fopenmp
-LDFLAGS = -lm
-
-# Main targets
-all: poisson_fd cg_solver cg_convergence
-
-# Poisson finite difference setup (Question 3.1)
-poisson_fd: poisson_fd.c
-	$(Let me provide instructions on how to use the code I've created for this assignment:
-Conjugate Gradient (CG) Solver - Usage Instructions
-I've implemented a comprehensive solution for the Conjugate Gradient (CG) solver assignment. Here's how to use and understand each part:
-File Structure
-
-poisson_fd.c - Sets up the Poisson problem as a linear system (Question 3.1)
-cg_solver.c - Serial implementation of CG for the Poisson problem (Question 3.2)
-cg_convergence.c - Study of CG convergence for a dense linear system (Question 3.3)
-Makefile - Compiles and runs all code parts
-
-Compiling and Running
-
-First, create the source files from the provided artifacts:
-
-Save "Poisson Problem - Finite Difference Setup" as poisson_fd.c
-Save "CG Implementation for Poisson Problem" as cg_solver.c
-Save "CG Convergence Study" as cg_convergence.c
-Save "Makefile and Instructions" as Makefile
-
-
-Compile all programs:
+---
+## File Structure
+1. poisson_fd.c - Sets up the Poisson problem as a linear system (Question 3.1)
+2. cg_solver.c - Serial implementation of CG for the Poisson problem (Question 3.2)
+3. cg_convergence.c - Study of CG convergence for a dense linear system (Question 3.3)
+4. Makefile - Compiles and runs all code parts
+### Compile all programs
 make all
-
-Run each part individually:
+### Run each part individually:
 make run_q1  # For Question 3.1
 make run_q2  # For Question 3.2
 make run_q3  # For Question 3.3
 
-Or run all parts and generate plots (requires gnuplot):
+###  Run all parts and generate plots (requires gnuplot):
 make run_all
 
+## Part 3.1: The Poisson Problem
 
-Part 3.1: The Poisson Problem
-The code in poisson_fd.c demonstrates how to convert the Poisson problem into a linear system Ay = b. Key features:
+The code in `poisson_fd.c` demonstrates how to convert the Poisson problem into a linear system Ay = b. Key features:
 
-Uses finite difference approximation for the Laplacian
-Sets up a structured grid on the unit square
-Creates the sparse matrix A and right-hand side vector b
-For N=4, displays the full matrix and vector for verification
+- Uses finite difference approximation for the Laplacian
+- Sets up a structured grid on the unit square
+- Creates the sparse matrix A and right-hand side vector b
+- For N=4, displays the full matrix and vector for verification
 
-The main concept here is that the 5-point stencil for the Laplacian creates a sparse matrix with a specific pattern: diagonal entries are 4/h², and off-diagonal entries for neighboring grid points are -1/h².
-Part 3.2: Serial Implementation of CG
-The code in cg_solver.c implements the Conjugate Gradient method to solve the Poisson problem. Key features:
+The main concept here is that the 5-point stencil for the Laplacian creates a sparse matrix with a specific pattern: diagonal entries are 4/h², and off-diagonal entries for neighboring grid points are -1/h². 
 
-Matrix-free implementation (no explicit storage of A)
-Solves for increasing grid sizes: N = 8, 16, 32, 64, 128, 256
-Measures performance (iterations and time)
-Calculates error compared to the exact solution
-Saves the solution for visualization
+## Part 3.2: Serial Implementation of CG
+
+The code in `cg_solver.c` implements the Conjugate Gradient method to solve the Poisson problem. Key features:
+- Matrix-free implementation (no explicit storage of A)
+- Solves for increasing grid sizes: N = 8, 16, 32, 64, 128, 256
+- Measures performance (iterations and time)
+- Calculates error compared to the exact solution
+- Saves the solution for visualization
 
 The implementation is optimized by:
+- Avoiding explicit storage of the matrix
+- Minimizing memory allocation/deallocation
+- Reusing dot products where possible
 
-Avoiding explicit storage of the matrix
-Minimizing memory allocation/deallocation
-Reusing dot products where possible
+## Part 3.3: Convergence of CG
 
-Part 3.3: Convergence of CG
-The code in cg_convergence.c studies the convergence properties of CG for a dense linear system. Key features:
+The code in `cg_convergence.c` studies the convergence properties of CG for a dense linear system. Key features:
+- Creates the dense matrix A with entries (A)ᵢⱼ = (N - |i-j|)/N
+- Uses stopping criterion with relative tolerance = √eps(double)
+- Records residuals at each iteration
+- Compares observed convergence with theoretical prediction
+- Tests for matrix sizes N = 10², 10³, 10⁴.
 
-Creates the dense matrix A with entries (A)ᵢⱼ = (N - |i-j|)/N
-Uses stopping criterion with relative tolerance = √eps(double)
-Records residuals at each iteration
-Compares observed convergence with theoretical prediction
-Tests for matrix sizes N = 10², 10³, 10⁴, 10⁵
+**Note**: For N = 10⁵, Not able to compute on Callan system.
 
-Note: For N = 10⁵, the computation may take significant time and memory.
-Visualization
-After running make run_all, two plot files will be generated:
+## Visualization
 
-solution_plot.png - 3D plot of the solution to the Poisson equation
-residuals_plot.png - Convergence history of residuals for different matrix sizes
+After running `make run_all`, two plot files will be generated:
+1. solution_plot.png - 3D plot of the solution to the Poisson equation
+2. residuals_plot.png - Convergence history of residuals for different matrix sizes
 
-Understanding the Results
+## Understanding the Results
+
 For Question 3.2, observe how:
+![[solution_plot.png]]
 
-The number of iterations grows with grid size
-The time to solution scales with problem size
-The error decreases with finer grids
+- The number of iterations grows with grid size
+- The time to solution scales with problem size
+- The error decreases with finer grids
 
 For Question 3.3, observe how:
 
-The convergence rate depends on the condition number
-The residual decreases approximately linearly on a log scale
-The observed convergence matches the theoretical prediction
+![[residuals_plot 1.png]]
+- The convergence rate depends on the condition number
+- The residual decreases approximately linearly on a log scale
+- The observed convergence matches the theoretical prediction
 
-These observations validate the theoretical properties of the CG method as discussed in the detailed explanation.
-Important Notes
-
-For larger problem sizes (especially N = 10⁵ in Q3.3), you may need substantial memory and computation time.
-The condition numbers used in the analysis are approximations. In a real implementation, you would compute them using specialized libraries.
-The plotting scripts require gnuplot to be installed.
+## Important Notes
+1. For larger problem sizes (especially N = 10⁵ in Q3.3), we may need substantial memory and computation time. (Not able to execute on Callan, process getting killed automatically).
+2. The plotting scripts require gnuplot.
