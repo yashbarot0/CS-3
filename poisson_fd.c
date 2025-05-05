@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <math.h>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 /*
  * This code sets up the linear system Ay = b for the Poisson equation
  * -∆u = f on the unit square [0,1]² with u = 0 on the boundary.

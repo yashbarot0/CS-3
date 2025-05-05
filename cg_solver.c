@@ -3,6 +3,11 @@
 #include <math.h>
 #include <time.h>
 
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 // Function f(x,y) = 2π² sin(πx) sin(πy)
 double f(double x, double y) {
     return 2 * M_PI * M_PI * sin(M_PI * x) * sin(M_PI * y);
